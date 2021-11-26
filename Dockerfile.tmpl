@@ -13,7 +13,7 @@ FROM gcr.io/kaggle-images/python-lightgbm-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAG
 FROM gcr.io/kaggle-images/python-torch-whl:${GPU_BASE_IMAGE_NAME}-${BASE_IMAGE_TAG}-${TORCH_VERSION} AS torch_whl
 FROM ${BASE_IMAGE_REPO}/${GPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 ENV CUDA_MAJOR_VERSION=11
-ENV CUDA_MINOR_VERSION=0
+ENV CUDA_MINOR_VERSION=2
 # NVIDIA binaries from the host are mounted to /opt/bin.
 ENV PATH=/opt/bin:${PATH}
 # Add CUDA stubs to LD_LIBRARY_PATH to support building the GPU image on a CPU machine.
@@ -24,7 +24,7 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
 FROM ${BASE_IMAGE_REPO}/${CPU_BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 {{ end }}
 # Keep these variables in sync if base image is updated.
-ENV TENSORFLOW_VERSION=2.6.0
+ENV TENSORFLOW_VERSION=2.7.0
 
 # We need to redefine the ARG here to get the ARG value defined above the FROM instruction.
 # See: https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
@@ -127,9 +127,8 @@ RUN pip install mxnet && \
 # Install GPU-only packages
 RUN pip install pycuda && \
     pip install pynvrtc && \
-    # b/190622765 latest version is causing issue. nnabla fixed it in https://github.com/sony/nnabla/issues/892, waiting for new release before we can remove this pin.
-    pip install pynvml==8.0.4 && \
-    pip install nnabla-ext-cuda$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
+    # Installing the version for CUDA 11.0
+    pip install nnabla-ext-cuda${CUDA_MAJOR_VERSION}0 && \
     /tmp/clean-layer.sh
 {{ end }}
 
