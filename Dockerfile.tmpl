@@ -201,6 +201,7 @@ RUN apt-get install -y libfreetype6-dev && \
     # Stop-words
     pip install stop-words && \
     pip install scikit-image && \
+    pip install opencv-contrib-python && \
     /tmp/clean-layer.sh
 
 RUN pip install ibis-framework && \
